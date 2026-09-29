@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Quiz | Technical Assessment</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #06b6d4;
+            --accent-color: #f43f5e;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            --glass-bg: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Animated Glowing Background Elements */
+        .bg-circle-1, .bg-circle-2 {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(90px);
+            z-index: -1;
+            animation: float 8s infinite alternate ease-in-out;
+        }
+        .bg-circle-1 {
+            width: 350px;
+            height: 350px;
+            background: #4f46e5;
+            top: -50px;
+            left: -50px;
+        }
+        .bg-circle-2 {
+            width: 400px;
+            height: 400px;
+            background: #e11d48;
+            bottom: -100px;
+            right: -100px;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(30px) scale(1.1); }
+        }
+
+        /* Glassmorphism Card Container */
+        .container {
+            width: 100%;
+            max-width: 850px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 35px 40px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.6s ease-out;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #38bdf8, #a855f7);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        /* Input Form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            color: #cbd5e1;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Buttons */
+        .btn-action {
+            width: 100%;
+            background: linear-gradient(90deg, #4f46e5, #06b6d4);
+            color: white;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(79, 70, 229, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5);
+        }
+
+        /* Header Bar in Test Page */
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .timer-badge {
+            background: rgba(244, 63, 94, 0.2);
+            border: 1px solid #f43f5e;
+            color: #fb7185;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 16px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        .warning-banner {
+            background: rgba(245, 158, 11, 0.15);
+            border-left: 4px solid #f59e0b;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #fde68a;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Question Cards with Glow & Hover */
+        .question-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .q-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 15px;
+        }
+
+        .options-list label {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .options-list label:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #38bdf8;
+        }
+
+        .options-list input[type="radio"] {
+            margin-right: 12px;
+            accent-color: #38bdf8;
+            transform: scale(1.2);
+        }
+
+        /* Hidden Sections */
+        #test-section, #result-section {
+            display: none;
+        }
+
+        /* Submission loader */
+        .loader {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .form-group.full-width { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-circle-1"></div>
+    <div class="bg-circle-2"></div>
+
+    <!-- 1. REGISTRATION FORM -->
+    <div class="container" id="registration-section">
+        <div class="title"><i class="fa-solid fa-graduation-cap"></i> Online Quiz</div>
+        <div class="subtitle">Enter candidate credentials to start the assessment</div>
+        
+        <form id="reg-form" onsubmit="startTest(event)">
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label><i class="fa-solid fa-user"></i> Full Name</label>
+                    <input type="text" id="student-name" required placeholder="Ex: Vimal P">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-id-card"></i> Register Number</label>
+                    <input type="text" id="student-reg" required placeholder="Ex: 922524244xxx">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-building-columns"></i> Department</label>
+                    <input type="text" id="student-dept" required placeholder="Ex: CSBS">
+                </div>
+                <div class="form-group full-width">
+                    <label><i class="fa-solid fa-users-class"></i> Year & Section</label>
+                    <input type="text" id="student-class" required placeholder="Ex: III year">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-action">
+                <span>Start Assessment</span> <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </form>
+    </div>
+
+    <!-- 2. ASSESSMENT INTERFACE -->
+    <div class="container" id="test-section">
+        <div class="test-header">
+            <div>
+                <h3 id="display-candidate-name" style="color: #38bdf8;">Candidate Name</h3>
+                <p id="display-candidate-reg" style="font-size: 12px; color: #94a3b8;">Reg No</p>
+            </div>
+            <div class="timer-badge" id="timer-display">
+                <i class="fa-solid fa-stopwatch"></i> 30:00
+            </div>
+        </div>
+
+        <div class="warning-banner">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 18px;"></i>
+            <div>
+                <strong>Anti-Cheating Enabled:</strong> Tab switching, copy-paste & window minimization are strictly prohibited. Warnings left: <span id="warn-count" style="color:#f43f5e; font-weight:700;">3</span>
+            </div>
+        </div>
+
+        <form id="quiz-form">
+            <div id="questions-wrapper"></div>
+            
+            <button type="button" class="btn-action" style="background: linear-gradient(90deg, #10b981, #059669);" onclick="submitQuiz()">
+                <i class="fa-solid fa-paper-plane"></i> Submit Assessment
+            </button>
+            <div class="loader" id="loader-msg">
+                <i class="fa-solid fa-spinner fa-spin"></i> Saving response to Server... Please wait!
+            </div>
+        </form>
+    </div>
+
+    <!-- 3. ANIMATED RESULT CARD -->
+    <div class="container" id="result-section" style="text-align: center;">
+        <i class="fa-solid fa-circle-check" style="font-size: 70px; color: #10b981; margin-bottom: 15px; animation: pulse 2s infinite;"></i>
+        <div class="title" style="background: linear-gradient(90deg, #10b981, #34d399); background-clip: text; -webkit-background-clip: text;">Assessment Completed!</div>
+        <p style="color: #cbd5e1; margin-top: 10px;">Thank you for completing the technical test.</p>
+        
+        <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; margin: 25px 0; border: 1px solid var(--glass-border);">
+            <p style="font-size: 14px; color: #94a3b8;">Your Final Score</p>
+            <p id="score-text" style="font-size: 36px; font-weight: 700; color: #38bdf8;"></p>
+        </div>
+
+        <p style="font-size: 12px; color: #64748b;">Response successfully synced with the Google Master Sheet.</p>
+    </div>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxssPoDQ1pvjybqZf-TYNpmPAtCvEYTYSHKJeza5YzerY4lucfErpVOr9qBqBG_i9KY/exec"; // REPLACE YOUR URL HERE
+
+    let studentData = {};
+    let warningsLeft = 3;
+    let totalTime = 30 * 60; 
+    let timerInterval;
+
+    const quizData = [
+        // --- BASIC / FUNDAMENTALS (20 Qs) ---
+        { q: "1. [Management] Which function involves organizing resources to achieve goals?", options: ["Planning", "Organizing", "Leading", "Controlling"], answer: 1 },
+        { q: "2. [Big Data] What are the primary 3 V's of Big Data?", options: ["Volume, Velocity, Variety", "Volume, Value, Vector", "Velocity, Visual, Variety", "Validity, Volume, Velocity"], answer: 0 },
+        { q: "3. [OOPs] Wrapping code and data into a single object is known as:", options: ["Inheritance", "Encapsulation", "Polymorphism", "Abstraction"], answer: 1 },
+        { q: "4. [DSA] Which data structure works on LIFO (Last In First Out)?", options: ["Queue", "Stack", "Array", "Linked List"], answer: 1 },
+        { q: "5. [Management] Who proposed the 14 Principles of Management?", options: ["Henry Fayol", "F.W. Taylor", "Peter Drucker", "Elton Mayo"], answer: 0 },
+        { q: "6. [Big Data] Framework widely used for distributed big data processing:", options: ["Apache Hadoop", "React", "Spring Boot", "Django"], answer: 0 },
+        { q: "7. [OOPs] Keyword used in Java to achieve class inheritance:", options: ["implements", "extends", "inherits", "super"], answer: 1 },
+        { q: "8. [DSA] Best-case time complexity for binary search in array:", options: ["O(N)", "O(1)", "O(log N)", "O(N log N)"], answer: 1 },
+        { q: "9. [Management] SWOT Analysis - 'S' stands for:", options: ["Strengths", "Strategy", "System", "Sales"], answer: 0 },
+        { q: "10. [Big Data] HDFS full form:", options: ["Hadoop Distributed File System", "High Data File System", "Heterogeneous Data Storage", "Hybrid Distributed File System"], answer: 0 },
+        { q: "11. [OOPs] Ability to take many forms in code execution:", options: ["Polymorphism", "Encapsulation", "Inheritance", "Modularity"], answer: 0 },
+        { q: "12. [DSA] Linear structure allowing insertion/deletion from both ends:", options: ["Queue", "Deque", "Stack", "Priority Queue"], answer: 1 },
+        { q: "13. [Management] Style giving total freedom to team members:", options: ["Autocratic", "Laissez-faire", "Democratic", "Bureaucratic"], answer: 1 },
+        { q: "14. [Big Data] Core feature of MapReduce in Big Data:", options: ["Storage", "Parallel Processing", "Visualization", "Indexing"], answer: 1 },
+        { q: "15. [OOPs] Constructor signature property:", options: ["Same name as class, no return type", "Different name from class", "Must return int", "Void return type"], answer: 0 },
+        { q: "16. [DSA] Worst-case complexity of Bubble Sort:", options: ["O(N)", "O(N log N)", "O(N^2)", "O(1)"], answer: 2 },
+        { q: "17. [Management] Maslow's theory addresses human:", options: ["Leadership", "Motivation", "Control", "Communication"], answer: 1 },
+        { q: "18. [Big Data] Best suited database type for unstructured data:", options: ["SQL", "NoSQL", "Flat File", "Excel"], answer: 1 },
+        { q: "19. [OOPs] Showing essential details while hiding background implementation:", options: ["Abstraction", "Inheritance", "Polymorphism", "Binding"], answer: 0 },
+        { q: "20. [DSA] Memory layout of array elements:", options: ["Random", "Contiguous", "Non-linear", "Heap only"], answer: 1 },
+
+        // --- MEDIUM LEVEL (10 Qs) ---
+        { q: "21. [DSA - Medium] Sorting algorithm guaranteeing O(N log N) time in all cases:", options: ["Quick Sort", "Merge Sort", "Insertion Sort", "Selection Sort"], answer: 1 },
+        { q: "22. [OOPs - Medium] Class having at least one abstract function is called:", options: ["Abstract Class", "Final Class", "Interface", "Concrete Class"], answer: 0 },
+        { q: "23. [Big Data - Medium] How Spark processes data faster than MapReduce:", options: ["Magnetic Tapes", "In-Memory Computation (RDD)", "No Fault Tolerance", "Single-thread"], answer: 1 },
+        { q: "24. [Management - Medium] Herzberg Motivator factor example:", options: ["Salary", "Working Conditions", "Achievement & Recognition", "Policy"], answer: 2 },
+        { q: "25. [DSA - Medium] Min queues required to implement a Stack:", options: ["1", "2", "3", "4"], answer: 1 },
+        { q: "26. [Big Data - Medium] HDFS default block size in modern versions:", options: ["64 KB", "1 MB", "128 MB", "1 GB"], answer: 2 },
+        { q: "27. [OOPs - Medium] Diamond problem in Java multiple inheritance is solved using:", options: ["Interfaces", "Abstract Classes", "Pointers", "Virtual Methods"], answer: 0 },
+        { q: "28. [DSA - Medium] Time complexity of Dijkstra using Min-Heap:", options: ["O(V^2)", "O((V+E) log V)", "O(V * E)", "O(E log E)"], answer: 1 },
+        { q: "29. [Management - Medium] Structure combining functional and project managers:", options: ["Line", "Matrix", "Divisional", "Flat"], answer: 1 },
+        { q: "30. [Big Data - Medium] Component for real-time streaming data ingestion:", options: ["Apache Pig", "Apache Kafka", "Apache Hive", "Apache Mahout"], answer: 1 }
+    ];
+
+    function startTest(e) {
+        e.preventDefault();
+        studentData = {
+            name: document.getElementById('student-name').value,
+            regNo: document.getElementById('student-reg').value,
+            dept: document.getElementById('student-dept').value,
+            className: document.getElementById('student-class').value
+        };
+
+        document.getElementById('registration-section').style.display = 'none';
+        document.getElementById('test-section').style.display = 'block';
+        
+        document.getElementById('display-candidate-name').textContent = studentData.name;
+        document.getElementById('display-candidate-reg').textContent = `${studentData.regNo} | ${studentData.dept} - ${studentData.className}`;
+
+        renderQuestions();
+        startTimer();
+        enableAntiCheating();
+    }
+
+    function renderQuestions() {
+        const wrapper = document.getElementById('questions-wrapper');
+        quizData.forEach((data, index) => {
+            const qCard = document.createElement('div');
+            qCard.className = 'question-card';
+            
+            let optionsHTML = '';
+            data.options.forEach((opt, optIdx) => {
+                optionsHTML += `
+                    <label>
+                        <input type="radio" name="q${index}" value="${optIdx}">
+                        ${opt}
+                    </label>
+                `;
+            });
+
+            qCard.innerHTML = `
+                <div class="q-title">${data.q}</div>
+                <div class="options-list">${optionsHTML}</div>
+            `;
+            wrapper.appendChild(qCard);
+        });
+    }
+
+    function startTimer() {
+        const timerElement = document.getElementById('timer-display');
+        timerInterval = setInterval(() => {
+            let mins = Math.floor(totalTime / 60);
+            let secs = totalTime % 60;
+            secs = secs < 10 ? '0' + secs : secs;
+            mins = mins < 10 ? '0' + mins : mins;
+
+            timerElement.innerHTML = `<i class="fa-solid fa-stopwatch"></i> ${mins}:${secs}`;
+
+            if (totalTime <= 0) {
+                clearInterval(timerInterval);
+                alert("Time Expired! Auto-submitting assessment.");
+                submitQuiz();
+            }
+            totalTime--;
+        }, 1000);
+    }
+
+    function enableAntiCheating() {
+        document.addEventListener('visibilitychange', () => { if (document.hidden) triggerWarning(); });
+        window.addEventListener('blur', () => triggerWarning());
+
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('copy', e => e.preventDefault());
+        document.addEventListener('cut', e => e.preventDefault());
+        document.addEventListener('paste', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey && ['c', 'v', 'u', 'a'].includes(e.key.toLowerCase())) e.preventDefault();
+            if (e.ctrlKey && e.shiftKey && ['i', 'j', 'c'].includes(e.key.toLowerCase())) e.preventDefault();
+            if (e.key === 'F12') e.preventDefault();
+        });
+    }
+
+    function triggerWarning() {
+        warningsLeft--;
+        document.getElementById('warn-count').textContent = warningsLeft;
+        if (warningsLeft > 0) {
+            alert(`⚠️ SECURITY WARNING!\nWindow/Tab switch detected. Remaining Warnings: ${warningsLeft}`);
+        } else {
+            alert("⚠️ Maximum warnings exceeded! Submitting assessment now.");
+            submitQuiz();
+        }
+    }
+
+    let isSubmitted = false;
+    function submitQuiz() {
+        if (isSubmitted) return;
+        isSubmitted = true;
+
+        clearInterval(timerInterval);
+        document.getElementById('loader-msg').style.display = 'block';
+
+        let score = 0;
+        quizData.forEach((data, index) => {
+            const selected = document.querySelector(`input[name="q${index}"]:checked`);
+            if (selected && parseInt(selected.value) === data.answer) {
+                score++;
+            }
+        });
+
+        const percentage = Math.round((score / quizData.length) * 100);
+
+        const payload = {
+            name: studentData.name,
+            regNo: studentData.regNo,
+            dept: studentData.dept,
+            className: studentData.className,
+            score: score,
+            total: quizData.length,
+            percentage: percentage
+        };
+
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        }).then(() => {
+            document.getElementById('test-section').style.display = 'none';
+            document.getElementById('result-section').style.display = 'block';
+            document.getElementById('score-text').textContent = `${score} / ${quizData.length} (${percentage}%)`;
+        }).catch(err => {
+            alert("Submission error! Contact event manager.");
+        });
+    }
+</script>
+</body>
+</html>
